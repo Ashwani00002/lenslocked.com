@@ -2,14 +2,17 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
+
+	"github.com/julienschmidt/httprouter"
 )
 
 func handlerFunc(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 	if r.URL.Path == "/" {
 		fmt.Fprintf(w, r.URL.Path)
-	} else if r.URL.Path == "/Contact" {
+	} else if r.URL.Path == "/contact" {
 		fmt.Fprintf(w, "To get in touch send mail to <a href=\"mailto:support@lenslocked.com\">support@lenslocked.com</a>.")
 	} else {
 		w.WriteHeader(http.StatusNotFound)
@@ -17,9 +20,13 @@ func handlerFunc(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func Hello(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	fmt.Fprintf(w, "Hola, %s!\n", ps.ByName("name"))
+}
+
 func main() {
-	mux := &http.ServeMux{}
-	mux.HandleFunc("/", handlerFunc)
-	// http.HandleFunc("/", handlerFunc)
-	http.ListenAndServe(":8080", mux)
+	router := httprouter.New()
+	router.GET("/hello/:name/language", Hello)
+
+	log.Fatal(http.ListenAndServe(":8080", router))
 }
