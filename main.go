@@ -5,28 +5,23 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/julienschmidt/httprouter"
+	"github.com/gorilla/mux"
 )
 
-func handlerFunc(w http.ResponseWriter, r *http.Request) {
+func Home(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
-	if r.URL.Path == "/" {
-		fmt.Fprintf(w, r.URL.Path)
-	} else if r.URL.Path == "/contact" {
-		fmt.Fprintf(w, "To get in touch send mail to <a href=\"mailto:support@lenslocked.com\">support@lenslocked.com</a>.")
-	} else {
-		w.WriteHeader(http.StatusNotFound)
-		fmt.Fprintf(w, "<h1>We could not find the page you are looking for</h1><p>Please email us if you keep being sent to an invalid page</p>")
-	}
+	fmt.Fprintf(w, "<h1>Welcome to my awesome site</h1>")
 }
 
-func Hello(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	fmt.Fprintf(w, "Hola, %s!\n", ps.ByName("name"))
+func contact(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html")
+	fmt.Fprintf(w, "To get in touch send mail to <a href=\"mailto:support@lenslocked.com\">support@lenslocked.com</a>.")
 }
 
 func main() {
-	router := httprouter.New()
-	router.GET("/hello/:name/language", Hello)
+	r := mux.NewRouter()
+	r.HandleFunc("/", Home)
+	r.HandleFunc("/contact", contact)
 
-	log.Fatal(http.ListenAndServe(":8080", router))
+	log.Fatal(http.ListenAndServe(":3000", r))
 }
