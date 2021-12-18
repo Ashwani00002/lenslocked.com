@@ -4,31 +4,36 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"text/template"
 
-	"github.com/julienschmidt/httprouter"
+	"github.com/gorilla/mux"
 )
 
-func Home(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+var homeTemplate *template.Template
+
+func home(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
-	fmt.Fprintf(w, "<h1>Welcome to my awesome site</h1>")
+	err := homeTemplate.Execute(w, nil)
+	if err != nil {
+		panic(err)
+	}
 }
 
-func contact(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func contact(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 	fmt.Fprintf(w, "To get in touch send mail to <a href=\"mailto:support@lenslocked.com\">support@lenslocked.com</a>.")
 }
 
-func notFound(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html")
-	w.WriteHeader(http.StatusNotFound)
-	fmt.Fprintf(w, "Sorry!, the page you're looking does not exist")
-}
-
 func main() {
-	r := httprouter.New()
-	r.GET("/", Home)
-	r.GET("/contact", contact)
-	r.NotFound = http.HandlerFunc(notFound)
+	var err error
+
+	homeTemplate, err = template.ParseFiles("views/home.gohtml")
+	if err != nil {
+		panic(err)
+	}
+	r := mux.NewRouter()
+	r.HandleFunc("/home", home)
+	r.HandleFunc("/contact", contact)
 
 	log.Fatal(http.ListenAndServe(":3000", r))
 }
