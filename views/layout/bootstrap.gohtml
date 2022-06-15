@@ -9,8 +9,8 @@
   </head>
 
   <body>
+    {{template "navbar"}}
     <div class="container-fluid">
-        {{template "navbar"}}
         {{template "yield" .}}
         {{template "footer"}}
     </div>
