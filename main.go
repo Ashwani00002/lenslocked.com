@@ -11,6 +11,7 @@ import (
 var (
 	homeView    *views.View
 	contactView *views.View
+	signupView  *views.View
 )
 
 func home(w http.ResponseWriter, r *http.Request) {
@@ -25,14 +26,21 @@ func contact(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func signup(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html")
+	must(signupView.Render(w, nil))
+}
+
 func main() {
 	homeView = views.NewViews("bootstrap", "views/home.gohtml")
 	contactView = views.NewViews("bootstrap", "views/contact.gohtml")
+	signupView = views.NewViews("bootstrap", "views/signup.gohtml")
 
 	r := mux.NewRouter()
 
 	r.HandleFunc("/", home)
 	r.HandleFunc("/contact", contact)
+	r.HandleFunc("/signup", signup)
 
 	log.Fatal(http.ListenAndServe(":3000", r))
 }
