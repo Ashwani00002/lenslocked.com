@@ -1,38 +1,43 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
-	"text/template"
 
 	"github.com/gorilla/mux"
+	"lenslocked.com/views"
 )
 
-var homeTemplate *template.Template
+var (
+	homeView    *views.View
+	contactView *views.View
+)
 
 func home(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
-	err := homeTemplate.Execute(w, nil)
+	err := homeView.Template.ExecuteTemplate(w, homeView.Layout, nil)
 	if err != nil {
-		panic(err)
+		log.Fatalf("execution failed: %s", err)
 	}
+
 }
 
 func contact(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
-	fmt.Fprintf(w, "To get in touch send mail to <a href=\"mailto:support@lenslocked.com\">support@lenslocked.com</a>.")
+	err := contactView.Template.ExecuteTemplate(w, contactView.Layout, nil)
+	if err != nil {
+		log.Fatalf("execution failed: %s", err)
+	}
+
 }
 
 func main() {
-	var err error
+	homeView = views.NewViews("bootstrap", "views/home.gohtml")
+	contactView = views.NewViews("bootstrap", "views/contact.gohtml")
 
-	homeTemplate, err = template.ParseFiles("views/home.gohtml")
-	if err != nil {
-		panic(err)
-	}
 	r := mux.NewRouter()
-	r.HandleFunc("/home", home)
+
+	r.HandleFunc("/", home)
 	r.HandleFunc("/contact", contact)
 
 	log.Fatal(http.ListenAndServe(":3000", r))
