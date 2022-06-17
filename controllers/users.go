@@ -18,7 +18,7 @@ type Users struct {
 // Setting up new User's object with NewView.
 func NewUsers() *Users {
 	return &Users{
-		NewViews: views.NewViews("bootstrap", "views/users/new.gohtml"),
+		NewViews: views.NewViews("bootstrap", "users/new"),
 	}
 }
 

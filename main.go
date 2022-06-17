@@ -22,9 +22,3 @@ func main() {
 
 	log.Fatal(http.ListenAndServe(":3000", r))
 }
-
-func must(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
