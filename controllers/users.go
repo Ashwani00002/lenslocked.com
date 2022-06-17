@@ -35,18 +35,6 @@ type SignupForm struct {
 
 // Create is used to process the signup form when submits it. This is used to create a NewUser account.
 // POST /signup
-// func (u *Users) Create(w http.ResponseWriter, r *http.Request) {
-// 	err := r.ParseForm()
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// 	var form SignupForm
-// 	dec := schema.NewDecoder()
-// 	if dec.Decode(&form, r.PostForm); err != nil {
-// 		panic(err)
-// 	}
-// 	fmt.Fprintln(w, form)
-// }
 
 func (u *Users) Create(w http.ResponseWriter, r *http.Request) {
 	var form SignupForm

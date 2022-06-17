@@ -24,7 +24,7 @@ func layoutFiles() []string {
 	return files
 }
 
-func  NewViews(layout string, files ...string) *View {
+func NewViews(layout string, files ...string) *View {
 	files = append(files, layoutFiles()...)
 	t, err := template.ParseFiles(files...)
 	if err != nil {
@@ -36,7 +36,12 @@ func  NewViews(layout string, files ...string) *View {
 	}
 }
 
+func (v *View) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	v.Render(w, nil)
+}
+
 // Render is used to render the view with pre-defined layout.
 func (v *View) Render(w http.ResponseWriter, data interface{}) error {
+	w.Header().Set("Content-Type", "text/html")
 	return v.Template.ExecuteTemplate(w, v.Layout, data)
 }
