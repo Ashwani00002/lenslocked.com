@@ -1,10 +1,11 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 
-	_ "github.com/lib/pq"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 const (
@@ -17,14 +18,17 @@ const (
 
 func main() {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
-	db, err := sql.Open("postgres", psqlInfo)
+	db, err := gorm.Open(postgres.Open(psqlInfo), &gorm.Config{})
+	if err != nil {
+		panic("failed to connect database")
+	}
+	sqlDb, err := db.DB()
 	if err != nil {
 		panic(err)
 	}
-	err = db.Ping()
+	err = sqlDb.Ping()
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("Successfully connected! ")
-	db.Close()
+
 }
